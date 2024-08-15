@@ -8,7 +8,7 @@
         }
     });
     const categories = ref(props.categoriesProp);
-    const category = reactive({
+    const createForm = useForm({
         name: null,
     });
     const openCreateModal = () => {};
@@ -17,26 +17,13 @@
     const handleOpenCreate = () => {
         isOpenCreate.value = true;
     };
-    const handleCreate = async() => {
-        console.log(category.name);
-        try {
-            const res = await axios({
-                method: 'post',
-                url: '/categories',
-                data: {
-                    name: category.name
-                }
-            });
-            categories.value = res.data;
-            isOpenCreate.value = false;
-            hasMessage.value = 'Se ha creado una nueva categoria correctamente'
-        } catch (e) {
-            if (Object.keys(e.response.data).includes('errors')) {
-                hasMessage.value = e.response.data.message;
-                
+    const handleCreate = () => {
+        createForm.post(route('categories.store'), {
+            onSuccess: () => {
+                isOpenCreate.value = false
             }
-            console.log(e.response.data);
-        }
+        });
+        
     };
 </script>
 <template>
@@ -81,22 +68,24 @@
         </table>
         <a-modal
             title="Crear una categoria"
-            @ok="handleCreate"
-            v-model:open="isOpenCreate">
-            <div class="mb-4">
-                <label for="name">Categoria</label>
-                <input 
-                    type="text"
-                    name="name"
-                    id="name"
-                    v-model="category.name"
-                    class="rounded py-2 px-4 h-8 w-full">
-            </div>
-            <a-alert
-            type="error"
-            v-if="hasError"
-            :message="hasError"
-            closable/>
+            v-model:open="isOpenCreate"
+            :ok-button-props="{ class: ['hidden'] }">
+            <a-form
+                :model="createForm"
+                layout="vertical"
+                @finish="handleCreate">
+                <div class="mb-4">
+                    <a-form-item
+                        label="Categoria"
+                        name="name"
+                        :rules="[{ required: false, message: 'Ingrese la categoria' }]">
+                        <a-input
+                            v-model:value="createForm.name"/>
+                    </a-form-item>
+                    <p v-if="createForm.errors.name" class="text-red-700"> {{ createForm.errors.name }}</p>
+                </div>
+                <button class="rounded py-2 px-4 bg-green-500 text-white mt-2">Crear</button>
+            </a-form>
         </a-modal>
     </AuthenticatedLayout>
 </template>

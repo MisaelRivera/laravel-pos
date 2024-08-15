@@ -22,7 +22,7 @@ class CategoryController extends Controller
             'name' => 'required|unique:categories,name',
         ]);
         Category::create($category);
-        $categories = Category::orderBy('name')->get();
-        return response()->json($categories);
+        $request->session()->flash('message', 'Se ha creado una categoria correctamente');
+        return redirect()->route('categories.index');
     }
 }
