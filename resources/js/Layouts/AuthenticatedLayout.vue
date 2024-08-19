@@ -144,7 +144,7 @@ const showingNavigationDropdown = ref(false);
             </header>
 
             <!-- Page Content -->
-            <main class="h-screen">
+            <main>
                 <div class="flex h-full p-12 pl-0">
                     <div class="w-3/12 max-w-64">
                         <nav class="w-full px-2 bg-indigo-700 h-full rounded-r-2xl">
