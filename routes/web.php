@@ -26,6 +26,8 @@ Route::get('/dashboard', function () {
 Route::prefix('/categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
     Route::post('/', [CategoryController::class, 'store'])->name('categories.store');
+    Route::put('/{category}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -35,6 +37,7 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('/products')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('products.index');
+        Route::post('/', [ProductController::class, 'store'])->name('products.store');
     });
 
     Route::prefix('/customers')->group(function () {

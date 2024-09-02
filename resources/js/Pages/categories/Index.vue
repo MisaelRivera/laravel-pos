@@ -17,7 +17,13 @@
     });
 
     const editForm = useForm({
+        id: null,
         name: null,
+    });
+
+    const deleteForm = useForm({
+        id: null,
+        name: null
     });
     const isOpenCreate = ref(false);
     const isOpenEdit = ref(false);
@@ -42,6 +48,7 @@
     };
 
     const handleOpenEdit = (category) => {
+        editForm.id = category.id;
         editForm.name = category.name;
         isOpenEdit.value = true;
     };
@@ -49,6 +56,22 @@
     const handleEditClose = () => {
         isOpenEdit.value = false;
         editForm.name = '';
+    };
+
+    const handleEdit = () => {
+        try {
+            editForm.put(route('categories.update', editForm.id));
+            isOpenEdit.value = false;
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    const handleDelete = (category) => {
+        deleteForm.name = category.id;
+        deleteForm.name = category.name;
+        console.log(category);
+        deleteForm.delete(route('categories.destroy', category));
     };
 </script>
 <template>
@@ -74,7 +97,7 @@
             type="success"
             v-if="getMessage()"
             :message="getMessage()"/>
-            <div class="max-h-[500px] overflow-y-scroll overflow-x-hidden">
+            <div class="max-h-[500px] overflow-scroll">
                 <table class="border ml-5 w-full">
                     <thead>
                         <tr>
@@ -86,21 +109,21 @@
                     </thead>
                     <tbody>
                         <tr v-for="category in categories.data">
-                            <td class="py-3">{{ category.id }}</td>
-                            <td class="py-3">{{ category.name }}</td>
-                            <td class="py-3 text-left">
+                            <td class="py-3 border">{{ category.id }}</td>
+                            <td class="py-3 border">{{ category.name }}</td>
+                            <td class="py-3 text-left border">
                                 <EditOutlined 
                                    style="color:white; background-color: blue; border-radius: 50%; font-size: 20px; padding: 0.375rem"
                                    @click="() => handleOpenEdit(category)" />
                             </td>
-                            <td class="py-3 text-left">
-                                <Link
-                                    :href="route('categories.destroy', category.id)"
-                                    as="button"
-                                    method="DELETE">
-                                    <DeleteOutlined
-                                        style="color:white; background-color: firebrick; border-radius: 50%; font-size: 20px; padding: 0.375rem" />
-                                </Link>
+                            <td class="py-3 text-left border">
+                                <form
+                                    @submit.prevent="() => handleDelete(category)">
+                                    <button>
+                                        <DeleteOutlined
+                                            style="color:white; background-color: firebrick; border-radius: 50%; font-size: 20px; padding: 0.375rem" />
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     </tbody>
